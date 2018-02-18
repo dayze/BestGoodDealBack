@@ -39,14 +39,22 @@ module.exports = {
   lastProductsFromSubscriber: (req, res) => {
     User.findOne({_id: req.user.id}).populate({
       path: 'subscriptions',
-      populate: {
-        path: 'products',
-        populate: {
-          path: 'user',
-          select: 'email'
+      populate: [
+        {
+          path: 'products',
+          populate: {
+            path: 'user',
+            select: 'email'
+          }
+        },
+        {
+          path: 'products',
+          populate: {
+            path: 'store',
+            select: 'name'
+          }
         }
-      }
-    }).then((user) => {
+      ]    }).then((user) => {
       let products = []
       for (let subscriber of user.subscriptions) {
         for (let product of subscriber.products) {
@@ -55,6 +63,7 @@ module.exports = {
             name: product.name,
             user: product.user.email,
             promotion: product.promotion,
+            store: product.store.name,
             imagePath: base64.base64Sync(
               product.imagePath)
           })
@@ -67,13 +76,17 @@ module.exports = {
   },
   nearProducts: (req, res) => {
     let {lat, lng} = req.query
-    Store.find({}).populate({
-      path: 'products',
-      populate: {
-        path: 'user',
-        select: 'email'
-      }
-    }).then((stores) => {
+    Store.find({}).populate([
+      {
+        path: 'products',
+        populate: {
+          path: 'user',
+          select: 'email'
+        }
+      },
+
+
+    ]).then((stores) => {
       let products = []
       for (let store of stores) {
         let distance = getDistance({lat, lng}, {lat: store.lat, lng: store.lng})

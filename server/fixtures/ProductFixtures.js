@@ -5,23 +5,6 @@ const mongoose = require('../../config/mongoose')
 
 mongoose.connect()
 
-Product.find({}).then((products) => {
-  for (let i = 0; i < products.length; i++) {
-    if (i < 7) {
-      Product.findOneAndUpdate({_id: products[i]._id},
-        {store: '5a8066e0bd1da446e012bae2'}
-      ).then(() => {
-
-      })
-
-    } else {
-      Product.findOneAndUpdate({_id: products[i]._id},
-        {store: '5a8066f5bd1da446e012bae3'}
-      ).then(() => {
-
-      })
-
-    }
-
-  }
+Product.findByIdAndRemove({_id: '5a897b78db0bbd1a3fab1140'}).then((products) => {
+  console.log(products)
 })
